@@ -17,9 +17,9 @@ int main(){
     map<int, int> process;
 
     // Get the arrival time and burst time of each process in a single line
+    cout << "Enter the arrival time and burst time of process separated by space: "<<endl;
     for (int i = 0; i < number_of_processes; i++) {
-        int arrival_time, burst_time;
-        cout << "Enter the arrival time and burst time of process " << i + 1 << " separated by space: "<<endl;
+        int arrival_time, burst_time;      
         cin >> arrival_time >> burst_time;
 
         process[arrival_time] = burst_time;
@@ -68,7 +68,7 @@ int main(){
         temp2++;
     }
 
-
+   
     // print the average waiting times
     int sum =0;
     for(int i=0; i<number_of_processes; i++){
@@ -76,7 +76,7 @@ int main(){
     }
     double average_waiting_time = sum/number_of_processes;
     cout <<endl;
-    cout << "\nAverage waiting time: " << average_waiting_time <<endl;
+    cout << "\n\nAverage waiting time: " << average_waiting_time <<endl;
 
 
 }

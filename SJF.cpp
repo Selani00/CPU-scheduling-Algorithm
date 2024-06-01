@@ -1,117 +1,99 @@
-//Implementation fo SHORTEST JOB FIRST(Preemptive) Using C++
 #include <iostream>
 #include <algorithm>
 #include <cstring>
 using namespace std;
 
-typedef struct proccess
-{
-	int at,bt,ct,ta,wt,btt;
-	string pro_id;
+int main() {
+    // Define a structure to represent each process
+    typedef struct process {
+        int arrival_time, burst_time, completion_time, turnaround_time, waiting_time, btt;
+        string pro_id; // Process ID
+    } Schedule;
 
-		/*
-	artime = Arrival time,
-	bt = Burst time,
-	ct = Completion time,
-	ta = Turn around time,
-	wt = Waiting time
-	*/
+    // Comparison function to sort processes by arrival time
+    auto compare = [](Schedule a, Schedule b) {
+        return a.arrival_time < b.arrival_time;
+    };
 
-}Schedule;
+    // Comparison function to sort processes by burst time
+    auto compare2 = [](Schedule a, Schedule b) {
+        return a.burst_time < b.burst_time;
+    };
 
-bool compare(Schedule a,Schedule b)
-{
-	return a.at<b.at;
+    Schedule pro[10]; // Array to store processes
+    int n, i, j, pcom; // n: number of processes, i & j: iteration variables, pcom: processes completed
 
-	/* This Schedule will always return TRUE
-	if above condition comes*/
-}
-bool compare2(Schedule a,Schedule b)
-{
-	return a.bt<b.bt;
+    cout << "Enter the number of Processes: ";
+    cin >> n;
 
-	/* This Schedule will always return TRUE
-	if above condition comes*/
-}
+    cout << "Enter the arrival time and burst time of process separated by space: \n";
 
-int main()
-{
-	Schedule pro[10];
-	//An array of Processes
-	int n,i,j,pcom;
-	//n = number of processes, i= iteration variable
+    // Input process details
+    for (i = 0; i < n; i++) {
+               
+        cin >> pro[i].arrival_time; 
+        cin >> pro[i].burst_time;   
+        pro[i].btt = pro[i].burst_time; 
+    }
 
-	cout<<"Enter the number of Process::";
-	cin>>n;
+    // Sort processes by their arrival time
+    sort(pro, pro + n, compare);
 
-	cout<<"Enter the Process id arrival time burst time :::";
+    i = 0;     
+    pcom = 0; 
 
-	for(i=0;i<n;i++)
-	{
-		cin>>pro[i].pro_id;
-		cin>>pro[i].at;
-		cin>>pro[i].bt;
-		pro[i].btt=pro[i].bt;
-	}
+    // Loop until all processes are completed
+    while (pcom < n) {
+        // Find the processes that have arrived by the current time
+        for (j = 0; j < n; j++) {
+            if (pro[j].arrival_time > i)
+                break;
+        }
 
-	sort(pro,pro+n,compare);
+        // Sort the arrived processes by burst time
+        sort(pro, pro + j, compare2);
 
-	/*sort is a predefined funcion  defined in algorithm.h header file,
-	it will sort the processes according to their arrival time*/
+        // If there are processes that have arrived
+        if (j > 0) {
+            // Find the first process that is not yet completed
+            for (j = 0; j < n; j++) {
+                if (pro[j].burst_time != 0)
+                    break;
+            }
+            // If the next process's arrival time is in the future, skip time to its arrival
+            if (pro[j].arrival_time > i) {
+                i = pro[j].arrival_time;
+            }
+            // Update the completion time of the current process
+            pro[j].completion_time = i + 1;
+            // Decrement the remaining burst time of the current process
+            pro[j].burst_time--;
+        }
+        i++; // Increment current time
+        pcom = 0; // Reset completed process count
 
-	i=0;
-	pcom=0;
-	while(pcom<n)
-	{
-		for(j=0;j<n;j++)
-		{
-			if(pro[j].at>i)
-			break;
-		}
+        // Count the number of processes that are completed
+        for (j = 0; j < n; j++) {
+            if (pro[j].burst_time == 0)
+                pcom++;
+        }
+    }
 
-		sort(pro,pro+j,compare2);
+    double sum = 0;        
+    double avg_wait_time;  
 
-		/*sort is a predefined funcion  defined in algorithm.h header file,
-	it will sort the processes according to their burst time*/
+    // Calculate turnaround time and waiting time for each process
+    for (i = 0; i < n; i++) {
+        pro[i].turnaround_time = pro[i].completion_time - pro[i].arrival_time; 
+        pro[i].waiting_time = pro[i].turnaround_time - pro[i].btt;             
 
-		if(j>0)
-		{
+        sum += pro[i].waiting_time; // Add waiting time to sum
+    }
 
-			for(j=0;j<n;j++)
-			{
-				if(pro[j].bt!=0)
-				break;
-			}
-			if(pro[j].at>i)
+    // Calculate average waiting time
+    avg_wait_time = sum / n;
+    
+    cout << "\nAverage waiting time: " << avg_wait_time << endl;
 
-			{
-				i=pro[j].at;
-
-			}
-			pro[j].ct=i+1;
-			pro[j].bt--;
-		}
-		i++;
-		pcom=0;
-		for(j=0;j<n;j++)
-		{
-			if(pro[j].bt==0)
-			pcom++;
-		}
-	}
-
-	cout<<"ProID\tAtime\tBtime\tCtime\tTtime\tWtime\n";
-
-	for(i=0;i<n;i++)
-	{
-		pro[i].ta=pro[i].ct-pro[i].at;
-		pro[i].wt=pro[i].ta-pro[i].btt;
-
-		/*Printing the Process id, arrival time, burst time,
-		completion time, turn around time, waiting time*/
-
-		cout<<pro[i].pro_id<<"\t"<<pro[i].at<<"\t"<<pro[i].btt<<"\t"<<pro[i].ct<<"\t"<<pro[i].ta<<"\t"<<pro[i].wt;
-		cout<<endl;
-	}
-	return 0;
+    return 0;
 }
