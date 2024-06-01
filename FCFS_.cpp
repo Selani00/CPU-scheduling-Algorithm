@@ -76,7 +76,7 @@ int main(){
     }
     double average_waiting_time = sum/number_of_processes;
     cout <<endl;
-    cout << "\n\nAverage waiting time: " << average_waiting_time <<endl;
+    cout << "\nAverage waiting time: " << average_waiting_time <<endl;
 
 
 }
